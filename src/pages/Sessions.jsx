@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getSessions } from "../api/dashboard.api";
+import { getSessions, searchSessions } from "../api/dashboard.api";
 import "./Sessions.css";
 
 export default function Sessions() {
@@ -8,10 +8,19 @@ export default function Sessions() {
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
-        fetchSessions();
-    }, [page]);
+        const delayDebounce = setTimeout(() => {
+            if (searchTerm.trim()) {
+                handleSearch();
+            } else {
+                fetchSessions();
+            }
+        }, 400);
+
+        return () => clearTimeout(delayDebounce);
+    }, [page, searchTerm]);
 
     const fetchSessions = async () => {
         try {
@@ -29,10 +38,44 @@ export default function Sessions() {
         }
     };
 
+    const handleSearch = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const res = await searchSessions(searchTerm, page, 5);
+
+            setSessions(res.data.sessions);
+            setTotalPages(res.data.totalPages);
+        } catch (err) {
+            setError("Failed to search sessions");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+
+        // reset page only if needed
+        if (page !== 1) setPage(1);
+    };
+
     return (
         <div className="sessions-page">
             <div className="page-header">
                 <h1>Sessions</h1>
+            </div>
+
+            <div className="search-container">
+                <input
+                    type="text"
+                    placeholder="Search sessions by ID..."
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    className="search-input"
+                />
             </div>
 
             {loading ? (
@@ -42,12 +85,6 @@ export default function Sessions() {
                 </div>
             ) : error ? (
                 <div className="alert-error">{error}</div>
-            ) : sessions.length === 0 ? (
-                <div className="empty-state">
-                    <div className="empty-icon">📭</div>
-                    <h3>No sessions found</h3>
-                    <p>No active sessions yet</p>
-                </div>
             ) : (
                 <>
                     <div className="table-container">
@@ -62,29 +99,39 @@ export default function Sessions() {
                             </thead>
 
                             <tbody>
-                                {sessions.map((s) => (
-                                    <tr key={s.sessionId}>
-                                        <td>
-                                            <code className="session-id">
-                                                {s.sessionId}
-                                            </code>
-                                        </td>
+                                {sessions.length > 0 ? (
+                                    sessions.map((s) => (
+                                        <tr key={s.sessionId}>
+                                            <td>
+                                                <code className="session-id">
+                                                    {s.sessionId}
+                                                </code>
+                                            </td>
 
-                                        <td>
-                                            <span className="badge">
-                                                {s.messageCount}
-                                            </span>
-                                        </td>
+                                            <td>
+                                                <span className="badge">
+                                                    {s.messageCount}
+                                                </span>
+                                            </td>
 
-                                        <td>
-                                            {new Date(s.startTime).toLocaleString()}
-                                        </td>
+                                            <td>
+                                                {new Date(s.startTime).toLocaleString()}
+                                            </td>
 
-                                        <td>
-                                            {new Date(s.lastActivity).toLocaleString()}
+                                            <td>
+                                                {new Date(s.lastActivity).toLocaleString()}
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="4" className="no-results">
+                                            {searchTerm
+                                                ? "No sessions match your search"
+                                                : "No sessions found"}
                                         </td>
                                     </tr>
-                                ))}
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -110,8 +157,6 @@ export default function Sessions() {
                     </div>
                 </>
             )}
-
-
         </div>
     );
 }
