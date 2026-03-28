@@ -1,0 +1,249 @@
+@keyframes pulse-dot {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: .6;
+        transform: scale(.75);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+}
+
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.sidebar-root {
+    font-family: 'DM Mono', monospace;
+    width: 228px;
+    height: 100vh;
+    background: #080b10;
+    border-right: 1px solid rgba(255, 255, 255, .055);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    animation: slide-in .35s ease both;
+}
+
+/* noise texture overlay */
+.sidebar-root::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: .025;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* indigo glow bleed top-left */
+.sidebar-root::after {
+    content: '';
+    position: absolute;
+    top: -60px;
+    left: -40px;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(99, 102, 241, .18) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.sidebar-header {
+    position: relative;
+    z-index: 1;
+    padding: 22px 20px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, .055);
+}
+
+.logo-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 16px rgba(99, 102, 241, .45), inset 0 1px 0 rgba(255, 255, 255, .15);
+    flex-shrink: 0;
+}
+
+.logo-wordmark {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: .18em;
+    background: linear-gradient(90deg, #fff 30%, #a5b4fc 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.logo-badge {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: .1em;
+    color: rgba(165, 180, 252, .5);
+    border: 1px solid rgba(165, 180, 252, .18);
+    border-radius: 4px;
+    padding: 2px 5px;
+    text-transform: uppercase;
+}
+
+/* ── nav ── */
+.sidebar-nav {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.nav-label {
+    font-size: 9px;
+    letter-spacing: .14em;
+    color: rgba(255, 255, 255, .2);
+    padding: 0 10px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 400;
+    letter-spacing: .02em;
+    text-decoration: none;
+    color: rgba(255, 255, 255, .35);
+    border: 1px solid transparent;
+    transition: color .15s, background .15s, border-color .15s, box-shadow .15s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-link:hover {
+    color: rgba(255, 255, 255, .75);
+    background: rgba(255, 255, 255, .04);
+}
+
+.nav-link.active {
+    color: #e0e7ff;
+    background: rgba(99, 102, 241, .12);
+    border-color: rgba(99, 102, 241, .25);
+    box-shadow: 0 0 18px rgba(99, 102, 241, .12), inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+/* shimmer on active */
+.nav-link.active::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(165, 180, 252, .06) 50%, transparent 60%);
+    background-size: 200% auto;
+    animation: shimmer 3s linear infinite;
+    pointer-events: none;
+}
+
+.nav-icon {
+    flex-shrink: 0;
+    opacity: .3;
+    transition: opacity .15s, color .15s;
+}
+
+.nav-link:hover .nav-icon {
+    opacity: .55;
+}
+
+.nav-link.active .nav-icon {
+    opacity: 1;
+    color: #818cf8;
+}
+
+.nav-dot {
+    margin-left: auto;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #818cf8;
+    box-shadow: 0 0 6px #818cf8;
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ── footer ── */
+.sidebar-footer {
+    position: relative;
+    z-index: 1;
+    padding: 10px 10px 14px;
+    border-top: 1px solid rgba(255, 255, 255, .055);
+}
+
+.logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 400;
+    letter-spacing: .02em;
+    color: rgba(255, 255, 255, .3);
+    border: 1px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    transition: color .15s, background .15s, border-color .15s;
+}
+
+.logout-btn:hover {
+    color: #f87171;
+    background: rgba(239, 68, 68, .07);
+    border-color: rgba(239, 68, 68, .18);
+}
+
+.logout-btn .nav-icon {
+    color: inherit;
+    opacity: .6;
+}
+
+.logout-btn:hover .nav-icon {
+    opacity: 1;
+}

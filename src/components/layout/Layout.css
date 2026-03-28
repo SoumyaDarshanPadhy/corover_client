@@ -1,0 +1,29 @@
+.layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.layout-main {
+    flex: 1;
+    overflow-y: auto;
+    background-color: var(--bg-secondary);
+    padding: var(--sp-8);
+}
+
+.layout-main::-webkit-scrollbar {
+    width: 8px;
+}
+
+.layout-main::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.layout-main::-webkit-scrollbar-thumb {
+    background: var(--border-dark);
+    border-radius: 4px;
+}
+
+.layout-main::-webkit-scrollbar-thumb:hover {
+    background: var(--border);
+}
